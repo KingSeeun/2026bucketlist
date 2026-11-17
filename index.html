@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>내 버킷리스트 현황판</title>
+<meta name="description" content="성인이 되면 하고 싶은 버킷리스트를 적으면 나만의 그래프 현황판이 만들어져요.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="버킷리스트 현황판">
+<meta property="og:description" content="성인이 되면 하고 싶은 버킷리스트를 적으면 나만의 그래프 현황판이 만들어져요.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='8' y='8' width='48' height='48' rx='12' fill='%230e9a82' transform='rotate(12 32 32)'/%3E%3Cpath d='M32 46s-13-8-13-17a7 7 0 0 1 13-3 7 7 0 0 1 13 3c0 9-13 17-13 17z' fill='%23fff'/%3E%3C/svg%3E">
+<style>
+:root { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&family=Gaegu:wght@400;700&display=swap">
+<style>
+/* Layout: 모눈 다이어리 위에 붙인 종이 카드. 맨 위 표지 카드(스티커·유형·요약), 넓은 화면은 왼쪽 적기(꾸미기·입력·목록) + 오른쪽 현황판 2열, 폰은 한 열 + 아래 이동 바. */
+:root {
+  --acc-l: #0e9a82; --acc-d: #3fcfb2;
+  --soft-l: #d5f2eb; --soft-d: #183a33;
+  --tint-l: #eef8f5; --tint-d: #0e1614;
+  --acc: var(--acc-l); --soft: var(--soft-l); --page: var(--tint-l);
+  --paper: #ffffff;
+  --ink: #23211f;
+  --ink2: #5d5a55;
+  --muted: #8a867f;
+  --rule: #e4e1da;
+  --line: rgba(35, 33, 31, 0.10);
+  --on-acc: #ffffff;
+  --warn: #b4410f;
+  --scrim: rgba(20, 18, 16, 0.45);
+  --shadow: 0 1px 0 rgba(35, 33, 31, 0.04), 0 6px 18px -8px rgba(35, 33, 31, 0.18);
+  --sw-mint: #0e9a82; --sw-peach: #e2583a; --sw-lemon: #b07f00; --sw-blue: #4766e8; --sw-lilac: #8d5bd6;
+  --font-display: "Jua", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --font-body: "Gowun Dodum", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --font-hand: "Gaegu", "Gowun Dodum", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+}
+:root[data-skin="peach"] { --acc-l: #e2583a; --acc-d: #ff8b6e; --soft-l: #fde1d8; --soft-d: #3d221b; --tint-l: #fdf3ef; --tint-d: #181110; }
+:root[data-skin="lemon"] { --acc-l: #b07f00; --acc-d: #e8be3c; --soft-l: #faedbd; --soft-d: #352b10; --tint-l: #fcf8e8; --tint-d: #16140c; }
+:root[data-skin="blue"] { --acc-l: #4766e8; --acc-d: #8399ff; --soft-l: #dfe5ff; --soft-d: #1e2444; --tint-l: #f1f4ff; --tint-d: #0f111a; }
+:root[data-skin="lilac"] { --acc-l: #8d5bd6; --acc-d: #b996f5; --soft-l: #ebdffb; --soft-d: #2c2040; --tint-l: #f6f1fd; --tint-d: #14101a; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --acc: var(--acc-d); --soft: var(--soft-d); --page: var(--tint-d);
+    --paper: #1f1e1c; --ink: #f3f1ec; --ink2: #c4c0b8; --muted: #8f8b84; --rule: #383632;
+    --line: rgba(255, 255, 255, 0.10); --on-acc: #141412; --warn: #ff9b6e; --scrim: rgba(0, 0, 0, 0.6);
+    --shadow: 0 1px 0 rgba(0, 0, 0, 0.3), 0 8px 22px -10px rgba(0, 0, 0, 0.7);
+    --sw-mint: #3fcfb2; --sw-peach: #ff8b6e; --sw-lemon: #e8be3c; --sw-blue: #8399ff; --sw-lilac: #b996f5;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --acc: var(--acc-d); --soft: var(--soft-d); --page: var(--tint-d);
+  --paper: #1f1e1c; --ink: #f3f1ec; --ink2: #c4c0b8; --muted: #8f8b84; --rule: #383632;
+  --line: rgba(255, 255, 255, 0.10); --on-acc: #141412; --warn: #ff9b6e; --scrim: rgba(0, 0, 0, 0.6);
+  --shadow: 0 1px 0 rgba(0, 0, 0, 0.3), 0 8px 22px -10px rgba(0, 0, 0, 0.7);
+  --sw-mint: #3fcfb2; --sw-peach: #ff8b6e; --sw-lemon: #e8be3c; --sw-blue: #8399ff; --sw-lilac: #b996f5;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; color: var(--ink); font: 400 15px/1.6 var(--font-body);
+  word-break: keep-all; overflow-wrap: anywhere;
+  background-color: var(--page);
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--acc) 9%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--acc) 9%, transparent) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; margin: 0; text-wrap: balance; }
+
+.app { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 14px 96px; display: grid; gap: 18px; }
+@media (min-width: 700px) { .app { padding-inline: 24px; } }
+@media (min-width: 1000px) { .app { padding-block: 18px 56px; } }
+
+/* 머리 줄 */
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.brand { font: 400 17px/1.2 var(--font-display); display: flex; align-items: center; gap: 8px; }
+.brand i { width: 14px; height: 14px; border-radius: 4px; background: var(--acc); transform: rotate(12deg); display: inline-block; }
+.btn { border: 1px solid var(--ink); background: var(--ink); color: var(--paper); font: 400 15px/1 var(--font-display); padding: 11px 16px; border-radius: 10px; cursor: pointer; white-space: nowrap; }
+.btn:hover { opacity: 0.88; }
+.btn.ghost { background: var(--paper); color: var(--ink); border-color: var(--rule); }
+.btn.small { padding: 8px 12px; font-size: 14px; }
+.btn[disabled] { opacity: 0.45; cursor: default; }
+
+.strip { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 11px 14px; border-radius: 12px; border: 1.5px dashed color-mix(in srgb, var(--acc) 60%, var(--rule)); background: color-mix(in srgb, var(--paper) 80%, transparent); font-size: 14px; }
+.strip p { margin: 0; flex: 1 1 240px; min-width: 0; }
+.strip b { font-family: var(--font-display); font-weight: 400; }
+
+/* 종이 카드 */
+.paper { position: relative; background: var(--paper); border-radius: 16px; box-shadow: var(--shadow); padding: 18px; min-width: 0; }
+.tape { position: absolute; top: -11px; left: 26px; width: 96px; height: 24px; transform: rotate(-4deg); border-radius: 2px;
+  background: repeating-linear-gradient(-45deg, color-mix(in srgb, var(--acc) 40%, transparent) 0 7px, color-mix(in srgb, var(--acc) 26%, transparent) 7px 14px); }
+.tape.r { left: auto; right: 30px; transform: rotate(5deg); width: 72px; }
+.ph { display: grid; gap: 2px; margin-bottom: 14px; }
+.ph h2 { font-size: 19px; line-height: 1.35; }
+.ph p { margin: 0; font-size: 13px; color: var(--ink2); }
+
+/* 표지 */
+.hero { padding: 22px 18px 18px; display: grid; gap: 18px; }
+@media (min-width: 700px) { .hero { padding: 26px 28px 22px; } }
+.hero-top { display: flex; align-items: center; gap: 14px; }
+.avatar { flex: none; width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; font-size: 34px; background: var(--soft); transform: rotate(-6deg); box-shadow: 0 0 0 3px var(--paper), 0 0 0 4.5px color-mix(in srgb, var(--acc) 45%, transparent); }
+@media (min-width: 700px) { .avatar { width: 84px; height: 84px; font-size: 46px; } }
+.hero-txt { flex: 1 1 auto; min-width: 0; display: grid; gap: 4px; }
+.eyebrow { margin: 0; font-size: 13px; color: var(--ink2); }
+.hero h1 { font-size: clamp(25px, 5.6vw, 40px); line-height: 1.2; overflow-wrap: anywhere; }
+.nmw { display: inline-block; max-width: 100%; }
+.type { margin-top: 4px; line-height: 1.5; }
+.type-tag { display: inline-block; font-size: 12px; line-height: 1.5; color: var(--ink2); border: 1px solid var(--rule); border-radius: 999px; padding: 0 8px; margin-right: 6px; vertical-align: 2px; }
+.type b { font: 400 17px/1.3 var(--font-display); background: linear-gradient(transparent 55%, color-mix(in srgb, var(--acc) 35%, transparent) 55%); padding-inline: 2px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.type-desc { margin: 0; font-size: 13px; color: var(--ink2); }
+.stamp { flex: none; width: 74px; height: 74px; border-radius: 50%; border: 2px dashed var(--acc); color: var(--ink); display: grid; place-content: center; text-align: center; transform: rotate(9deg); line-height: 1.15; }
+.stamp small { font-size: 10.5px; color: var(--ink2); }
+.stamp b { font: 400 19px/1.1 var(--font-display); }
+@media (min-width: 700px) { .stamp { width: 92px; height: 92px; } .stamp small { font-size: 12px; } .stamp b { font-size: 24px; } }
+@media (max-width: 699px) {
+  .hero { padding-top: 30px; }
+  .hero-top { align-items: flex-start; }
+  .stamp { position: absolute; top: -14px; right: 12px; width: 64px; height: 64px; background: var(--paper); }
+  .stamp small { font-size: 10px; }
+  .stamp b { font-size: 17px; }
+  .eyebrow { padding-right: 56px; }
+  .tape.r { display: none; }
+}
+
+.stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1.5px dashed var(--rule); }
+@media (min-width: 700px) { .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.stat { padding: 12px 4px 2px; display: grid; gap: 1px; align-content: start; min-width: 0; }
+.stat + .stat { border-left: 1.5px dashed var(--rule); padding-left: 14px; }
+@media (max-width: 699px) {
+  .stat:nth-child(3) { border-left: 0; padding-left: 4px; }
+  .stat:nth-child(n+3) { border-top: 1.5px dashed var(--rule); margin-top: 10px; }
+}
+.stat .k { font-size: 12.5px; color: var(--ink2); }
+.stat .v { font: 400 28px/1.2 var(--font-display); overflow-wrap: anywhere; }
+.stat .v small { font-size: 15px; margin-left: 2px; }
+.stat .v .hrt { color: var(--acc); font-size: 22px; margin-right: 3px; }
+.prog { height: 8px; border-radius: 999px; background: var(--soft); overflow: hidden; margin-top: 4px; }
+.prog span { display: block; height: 100%; background: var(--acc); border-radius: 999px; }
+
+/* 배치 */
+.main { display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr); grid-template-areas: "deco" "write" "dash" "list"; align-items: start; }
+#deco { grid-area: deco; }
+#write { grid-area: write; }
+#dash { grid-area: dash; }
+#mylist { grid-area: list; }
+@media (min-width: 1000px) {
+  .main { grid-template-columns: 350px minmax(0, 1fr); grid-template-rows: auto auto 1fr; grid-template-areas: "deco dash" "write dash" "list dash"; }
+}
+.app.shared .main { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; grid-template-areas: "dash"; }
+@media (min-width: 760px) { .app.shared .dash { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* 꾸미기 */
+.deco-grid { display: grid; gap: 14px; }
+.field { display: grid; gap: 6px; align-content: start; min-width: 0; margin: 0; padding: 0; border: 0; }
+.field > label, .field > legend, .lbl { font: 400 15px/1.3 var(--font-display); padding: 0; }
+.field > legend { margin-bottom: 6px; }
+.field .opt { font-family: var(--font-body); font-size: 12px; color: var(--ink2); margin-left: 4px; }
+input[type="text"], input[type="number"], textarea {
+  width: 100%; min-width: 0; font-size: 16px; padding: 10px 12px; border-radius: 10px;
+  border: 1px solid var(--rule); background: var(--paper);
+}
+input::placeholder, textarea::placeholder { color: var(--muted); }
+.emojis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
+.emo { aspect-ratio: 1; border-radius: 12px; border: 1px solid var(--rule); background: var(--paper); font-size: 22px; cursor: pointer; padding: 0; }
+.emo[aria-pressed="true"] { background: var(--soft); border-color: var(--acc); box-shadow: inset 0 0 0 1px var(--acc); }
+.skins { display: flex; flex-wrap: wrap; gap: 8px; }
+.skin { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px 6px 6px; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); cursor: pointer; font-size: 13px; }
+.skin i { width: 18px; height: 18px; border-radius: 50%; display: inline-block; }
+.skin[aria-pressed="true"] { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.skin[data-skin="mint"] i { background: var(--sw-mint); }
+.skin[data-skin="peach"] i { background: var(--sw-peach); }
+.skin[data-skin="lemon"] i { background: var(--sw-lemon); }
+.skin[data-skin="blue"] i { background: var(--sw-blue); }
+.skin[data-skin="lilac"] i { background: var(--sw-lilac); }
+
+/* 입력 */
+.form { display: grid; gap: 18px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips input, .hearts input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+.chips label { padding: 7px 12px; border: 1px solid var(--rule); border-radius: 999px; background: var(--paper); cursor: pointer; font-size: 14px; line-height: 1.3; }
+.chips label:hover { border-color: color-mix(in srgb, var(--acc) 60%, var(--rule)); }
+.chips input:checked + label { background: var(--soft); border-color: var(--acc); box-shadow: inset 0 0 0 1px var(--acc); }
+.chips input:focus-visible + label, .hearts input:focus-visible + label { outline: 2px solid var(--ink); outline-offset: 2px; }
+.field.missing > legend::after, .field.missing > label::after { content: "  골라주세요"; font-family: var(--font-body); font-size: 12.5px; color: var(--warn); }
+.field.missing > label::after { content: "  적어주세요"; }
+.agebox { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 10px; }
+.agebox output { font: 400 20px/1 var(--font-display); min-width: 3.2em; text-align: right; }
+input[type="range"] { width: 100%; accent-color: var(--acc); }
+.step { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--rule); background: var(--paper); cursor: pointer; font-size: 18px; line-height: 1; padding: 0; }
+.costbox { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; }
+.costbox span { font-size: 14px; color: var(--ink2); }
+.quick { display: flex; flex-wrap: wrap; gap: 6px; }
+.quick button { border: 1px dashed var(--rule); background: transparent; border-radius: 8px; padding: 4px 9px; font-size: 13px; cursor: pointer; color: var(--ink2); }
+.quick button:hover { border-color: var(--acc); color: var(--ink); }
+.hearts { display: flex; gap: 2px; }
+.hearts label { font-size: 30px; line-height: 1; padding: 0 3px; cursor: pointer; color: var(--rule); user-select: none; }
+.hearts[data-val="1"] label:nth-of-type(-n+1),
+.hearts[data-val="2"] label:nth-of-type(-n+2),
+.hearts[data-val="3"] label:nth-of-type(-n+3),
+.hearts[data-val="4"] label:nth-of-type(-n+4),
+.hearts[data-val="5"] label:nth-of-type(-n+5) { color: var(--acc); }
+.hearts-txt { font-size: 13px; color: var(--ink2); align-self: center; margin-left: 8px; }
+.form-acts { display: flex; gap: 8px; flex-wrap: wrap; }
+.form-acts .btn:first-child { flex: 1 1 auto; }
+.status { margin: 0; min-height: 1.4em; font-size: 13.5px; color: var(--ink2); }
+.status.err { color: var(--warn); }
+
+/* 현황판 */
+.dash { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); min-width: 0; }
+.dash .wide { grid-column: 1 / -1; }
+.empty { margin: 0; padding: 14px 0; color: var(--ink2); font-size: 14px; }
+
+/* 막대 */
+.bars { display: grid; gap: 9px; }
+.brow { display: grid; grid-template-columns: minmax(0, 5.8em) minmax(0, 1fr) 2.6em; align-items: center; gap: 10px; font-size: 14px; }
+.bars.long .brow { grid-template-columns: minmax(0, 9.5em) minmax(0, 1fr) auto; }
+.bl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.track { display: flex; align-items: center; height: 16px; border-radius: 0 6px 6px 0; background: color-mix(in srgb, var(--acc) 6%, transparent); }
+.fill { height: 16px; min-width: 0; border-radius: 0 6px 6px 0; background: color-mix(in srgb, var(--acc) 42%, var(--paper)); }
+.brow.top .fill { background: var(--acc); }
+.brow.top .bl { font-family: var(--font-display); }
+.bv { text-align: right; font: 400 15px/1 var(--font-display); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.brow.zero .bv, .brow.zero .bl { color: var(--muted); }
+.sub3 { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); }
+.sub3 h3, .h3 { font-size: 15px; margin-bottom: 10px; color: var(--ink); }
+.split { display: grid; gap: 20px; }
+
+/* 타임라인 */
+.tl { list-style: none; margin: 0; padding: 0; position: relative; display: grid; gap: 4px; }
+.tl::before { content: ""; position: absolute; left: calc(4.4em + 7px); top: 10px; bottom: 10px; width: 2px; background: var(--rule); border-radius: 2px; }
+.tl-row { display: grid; grid-template-columns: 4.4em 16px minmax(0, 1fr); gap: 0 12px; align-items: start; padding: 5px 0; position: relative; }
+.tl-age { text-align: right; display: grid; line-height: 1.15; padding-top: 2px; }
+.tl-age b { font: 400 20px/1.1 var(--font-display); justify-self: end; }
+.tl-age small { font-size: 12px; color: var(--ink2); }
+.tl-node { width: 16px; height: 16px; border-radius: 50%; margin-top: 6px; background: var(--paper); border: 2.5px solid color-mix(in srgb, var(--acc) 55%, var(--rule)); position: relative; z-index: 1; }
+.tl-row.top .tl-node { background: var(--acc); border-color: var(--acc); }
+.tl-row.top .tl-age b { background: linear-gradient(transparent 55%, color-mix(in srgb, var(--acc) 35%, transparent) 55%); }
+.tl-items { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 1px; }
+.chip { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; padding: 4px 10px; border-radius: 8px; border: 1px solid var(--rule); background: var(--paper); font-size: 13.5px; line-height: 1.35; overflow-wrap: anywhere; }
+.tl-row.top .chip { background: var(--soft); border-color: color-mix(in srgb, var(--acc) 40%, var(--rule)); }
+.chip.done { color: var(--ink2); text-decoration: line-through; }
+.chip.done::before { content: "✓"; text-decoration: none; color: var(--acc); font-weight: 700; }
+
+/* 칸 지도 */
+.board-cap { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; color: var(--ink2); margin-bottom: 8px; padding-left: 30px; }
+.board { display: grid; grid-template-columns: 24px repeat(3, minmax(0, 1fr)); gap: 6px; }
+.bh { text-align: center; font: 400 14px/1.2 var(--font-display); padding: 2px 0 4px; }
+.bh.cornr { padding: 0; }
+.rowlab { writing-mode: vertical-rl; text-orientation: mixed; font: 400 13px/1 var(--font-display); color: var(--ink2); display: flex; align-items: center; justify-content: center; letter-spacing: 0.08em; }
+.cell { border-radius: 12px; padding: 9px; min-height: 104px; background: color-mix(in srgb, var(--acc) 5%, var(--paper)); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.cell.go { background: var(--soft); border: 1.5px dashed var(--acc); }
+.cell-h { display: flex; align-items: baseline; justify-content: space-between; gap: 4px; flex-wrap: wrap; }
+.cell-h b { font: 400 14px/1.2 var(--font-display); }
+.cell-h span { font: 400 13px/1 var(--font-display); color: var(--ink2); }
+.cell .chip { font-size: 12.5px; padding: 3px 7px; }
+.cell-items { display: flex; flex-wrap: wrap; gap: 5px; }
+
+/* 기분 구름 */
+.cloud { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; min-height: 120px; }
+.fchip { font-family: var(--font-display); border-radius: 999px; padding: 4px 14px; border: 1px solid var(--rule); background: var(--paper); line-height: 1.3; display: inline-flex; align-items: baseline; gap: 6px; }
+.fchip small { font-size: 0.6em; color: var(--ink2); }
+.fchip.top { background: var(--acc); color: var(--on-acc); border-color: var(--acc); }
+.fchip.top small { color: var(--on-acc); }
+.fchip.zero { color: var(--muted); border-style: dashed; }
+
+/* 메모 */
+.memo { background: color-mix(in srgb, var(--soft) 70%, var(--paper)); }
+.memo .ph h2 { font-size: 19px; }
+.memo-grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+.hand { font-family: var(--font-hand); font-size: 20px; line-height: 1.45; }
+.memo textarea { font-family: var(--font-hand); font-size: 20px; line-height: 1.45; background: color-mix(in srgb, var(--paper) 75%, transparent); resize: vertical; }
+.noteview { margin: 0; padding: 8px 2px; border-bottom: 1.5px dashed color-mix(in srgb, var(--acc) 45%, var(--rule)); min-height: 2em; overflow-wrap: anywhere; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.steps li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 8px; align-items: start; overflow-wrap: anywhere; }
+.steps li::before { content: ""; width: 14px; height: 14px; border: 1.5px solid var(--ink2); border-radius: 3px; margin-top: 7px; }
+.steps .arrow { color: var(--ink2); }
+.pickout { margin: 10px 0 0; min-height: 1.4em; }
+
+/* 목록 */
+.lhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.items { list-style: none; margin: 10px 0 0; padding: 0; display: grid; }
+.item { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; align-items: start; padding: 11px 0; border-top: 1px dashed var(--rule); }
+.item:first-child { border-top: 0; }
+.item input[type="checkbox"] { width: 20px; height: 20px; margin: 3px 0 0; accent-color: var(--acc); }
+.tt { font: 400 16px/1.35 var(--font-display); overflow-wrap: anywhere; }
+.item.done .tt { text-decoration: line-through; color: var(--ink2); }
+.mm { font-size: 12.5px; color: var(--ink2); }
+.ia { grid-column: 2; display: flex; gap: 12px; }
+.lnk { background: none; border: 0; padding: 2px 0; color: var(--ink2); font-size: 13px; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.tag { display: inline-block; margin-left: 6px; padding: 0 6px; border: 1px solid var(--rule); border-radius: 4px; font: 400 11px/1.6 var(--font-body); color: var(--ink2); vertical-align: 2px; }
+.danger-row { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--rule); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.danger-row p { margin: 0; font-size: 12.5px; color: var(--ink2); flex: 1 1 180px; }
+
+/* 아래 이동 바 (폰) */
+.dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px)); background: color-mix(in srgb, var(--paper) 92%, transparent); border-top: 1px solid var(--line); backdrop-filter: blur(6px); }
+.dock button { border: 0; background: transparent; font: 400 15px/1 var(--font-display); padding: 10px 0; border-radius: 10px; cursor: pointer; }
+.dock button.primary { background: var(--ink); color: var(--paper); }
+@media (min-width: 1000px) { .dock { display: none; } }
+.app.shared ~ .dock { display: none; }
+
+/* 공유 창 */
+.overlay { position: fixed; inset: 0; z-index: 40; background: var(--scrim); display: grid; place-items: center; padding: 16px; }
+.sheet { width: min(100%, 580px); max-height: calc(100% - 8px); overflow: auto; background: var(--paper); border-radius: 18px; padding: 20px; display: grid; gap: 18px; box-shadow: var(--shadow); }
+.sheet-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.sheet-head h2 { font-size: 22px; }
+.sec { display: grid; gap: 8px; }
+.sec h3 { font-size: 16px; display: flex; align-items: center; gap: 8px; }
+.num { width: 22px; height: 22px; border-radius: 50%; background: var(--soft); display: inline-grid; place-items: center; font-size: 13px; }
+.hint { margin: 0; font-size: 12.5px; color: var(--ink2); }
+.copyrow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+.copyrow input { font-size: 13px; }
+#postOut { font-size: 14px; resize: none; }
+.cardimg { width: min(100%, 300px); aspect-ratio: 4 / 5; border-radius: 12px; border: 1px solid var(--line); background: var(--page); justify-self: center; }
+.acts { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.msg { margin: 0; min-height: 1.4em; font-size: 13.5px; text-align: center; color: var(--ink); }
+
+/* 알림·툴팁 */
+.toast { position: fixed; left: 50%; bottom: calc(76px + env(safe-area-inset-bottom, 0px)); z-index: 35; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; max-width: calc(100% - 32px);
+  background: var(--ink); color: var(--paper); padding: 10px 14px; border-radius: 12px; font-size: 14px; box-shadow: var(--shadow); }
+.toast button { background: none; border: 0; color: inherit; text-decoration: underline; font: inherit; cursor: pointer; padding: 0; white-space: nowrap; }
+@media (min-width: 1000px) { .toast { bottom: 24px; } }
+.tip { position: fixed; z-index: 50; left: 0; top: 0; pointer-events: none; opacity: 0; background: var(--ink); color: var(--paper); font-size: 12.5px; line-height: 1.5; padding: 7px 10px; border-radius: 8px; max-width: 260px; white-space: pre-line; transition: opacity 0.08s; }
+.tip.on { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <header class="bar">
+    <div class="brand"><i aria-hidden="true"></i>버킷리스트 현황판</div>
+    <button class="btn" type="button" id="shareBtn">패들렛에 공유하기</button>
+  </header>
+
+  <div class="strip" id="viewing" hidden>
+    <p><b id="viewingName">친구</b>의 현황판을 보고 있어요. 보기만 할 수 있고, 내 현황판에는 아무 영향이 없어요.</p>
+    <button class="btn small" type="button" id="goMine">내 현황판 만들기</button>
+  </div>
+  <div class="strip" id="exStrip" hidden>
+    <p>지금 보이는 항목은 모양을 보여주는 <b>예시</b>예요. 내 첫 버킷리스트를 붙이면 예시는 자동으로 사라져요.</p>
+    <button class="btn ghost small" type="button" id="clearEx">예시 지우고 시작</button>
+  </div>
+
+  <section class="paper hero" aria-label="표지">
+    <span class="tape" aria-hidden="true"></span>
+    <span class="tape r" aria-hidden="true"></span>
+    <div class="hero-top">
+      <div class="avatar" id="avatar" aria-hidden="true">🐱</div>
+      <div class="hero-txt">
+        <p class="eyebrow">성인이 되면 하고 싶은 것들</p>
+        <h1 id="heroName">나의 버킷리스트</h1>
+        <div class="type"><span class="type-tag">나의 유형</span><b id="typeName"></b></div>
+        <p class="type-desc" id="typeDesc"></p>
+      </div>
+      <div class="stamp" id="stamp"><small>스무 살까지</small><b id="dday">D-0</b></div>
+    </div>
+    <div class="stats" id="stats"></div>
+  </section>
+
+  <div class="main">
+    <section class="paper" id="deco" aria-labelledby="decoH">
+      <div class="ph"><h2 id="decoH">내 현황판 꾸미기</h2><p>이름과 스티커, 색을 골라보세요.</p></div>
+      <div class="deco-grid">
+        <div class="field">
+          <label for="nick">실명(별명)</label>
+          <input id="nick" type="text" maxlength="20" placeholder="예: 홍길동(길동이)" autocomplete="off">
+        </div>
+        <div class="field">
+          <span class="lbl" id="emoL">스티커</span>
+          <div class="emojis" id="emojis" role="group" aria-labelledby="emoL"></div>
+        </div>
+        <div class="field">
+          <span class="lbl" id="skinL">색 테마</span>
+          <div class="skins" id="skins" role="group" aria-labelledby="skinL"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="paper" id="write" aria-labelledby="writeH">
+      <div class="ph"><h2 id="writeH">버킷리스트 적기</h2><p>제목만 쓰고 나머지는 눌러서 고르면 돼요.</p></div>
+      <form class="form" id="f" autocomplete="off" novalidate>
+        <div class="field" id="g-title">
+          <label for="ftitle">하고 싶은 것</label>
+          <input id="ftitle" type="text" maxlength="30" placeholder="예: 혼자 제주도 일주일 여행">
+        </div>
+        <fieldset class="field" id="g-cat"><legend>어떤 종류?</legend><div class="chips" id="c-cat"></div></fieldset>
+        <div class="field">
+          <label for="fage">몇 살에 하고 싶어?</label>
+          <div class="agebox">
+            <button type="button" class="step" id="ageMinus" aria-label="한 살 줄이기">−</button>
+            <input id="fage" type="range" min="20" max="100" step="1" value="20">
+            <button type="button" class="step" id="agePlus" aria-label="한 살 늘리기">+</button>
+            <output id="fageOut" for="fage">20살</output>
+          </div>
+          <div class="quick" id="ageQuick"></div>
+        </div>
+        <div class="field">
+          <label for="fcost">돈은 얼마나 들까? <span class="opt">대충 짐작해도 괜찮아요</span></label>
+          <div class="costbox"><input id="fcost" type="number" inputmode="numeric" min="0" max="100000" step="1" value="0"><span>만원</span></div>
+          <div class="quick" id="costQuick"></div>
+        </div>
+        <fieldset class="field">
+          <legend>얼마나 하고 싶어?</legend>
+          <div style="display:flex;flex-wrap:wrap;align-items:center">
+            <div class="hearts" id="hearts" data-val="3"></div>
+            <span class="hearts-txt" id="heartsTxt">하고 싶어</span>
+          </div>
+        </fieldset>
+        <fieldset class="field" id="g-diff"><legend>얼마나 어려울까?</legend><div class="chips" id="c-diff"></div></fieldset>
+        <fieldset class="field" id="g-with"><legend>누구와?</legend><div class="chips" id="c-with"></div></fieldset>
+        <fieldset class="field" id="g-place"><legend>어디서?</legend><div class="chips" id="c-place"></div></fieldset>
+        <fieldset class="field" id="g-dur"><legend>얼마나 걸릴까?</legend><div class="chips" id="c-dur"></div></fieldset>
+        <fieldset class="field" id="g-season"><legend>어느 계절에?</legend><div class="chips" id="c-season"></div></fieldset>
+        <fieldset class="field" id="g-feel"><legend>이루면 어떤 기분일까? <span class="opt">여러 개 골라도 돼요</span></legend><div class="chips" id="c-feel"></div></fieldset>
+        <div class="field">
+          <label for="fstep">첫걸음 <span class="opt">선택 · 이걸 위해 처음 해볼 일</span></label>
+          <input id="fstep" type="text" maxlength="30" placeholder="예: 항공권 가격 알아보기">
+        </div>
+        <div class="form-acts">
+          <button class="btn" type="submit" id="fsubmit">현황판에 붙이기</button>
+          <button class="btn ghost" type="button" id="fcancel" hidden>수정 취소</button>
+        </div>
+        <p class="status" id="status" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section class="dash" id="dash" aria-label="현황판">
+      <section class="paper wide">
+        <div class="ph"><h2>몇 살에 가장 많이 하고 싶을까?</h2><p>나의 인생 타임라인 · 같은 줄에 있는 게 같은 나이에 하고 싶은 것들이에요</p></div>
+        <div id="cTime"></div>
+      </section>
+      <section class="paper">
+        <div class="ph"><h2>어떤 종류가 가장 많을까?</h2><p>종류별 개수 · 진한 막대가 1등이에요</p></div>
+        <div id="cCat"></div>
+      </section>
+      <section class="paper">
+        <div class="ph"><h2>돈은 얼마나 들까?</h2><p>비싼 순서와 가격대별 개수</p></div>
+        <div id="cCost"></div>
+      </section>
+      <section class="paper wide">
+        <div class="ph"><h2>꼭 하고 싶은데 쉬운 건 뭘까?</h2><p>하고 싶은 정도와 어려운 정도로 나눈 칸 지도 · 점선 칸이 '당장 해보기'예요</p></div>
+        <div id="cBoard"></div>
+      </section>
+      <section class="paper">
+        <div class="ph"><h2>누구와 하고 싶을까?</h2><p>함께하고 싶은 사람별 개수</p></div>
+        <div id="cWith"></div>
+      </section>
+      <section class="paper">
+        <div class="ph"><h2>이루면 어떤 기분일까?</h2><p>많이 고른 기분일수록 크게 보여요 · 숫자는 그 기분을 고른 버킷리스트 개수예요</p></div>
+        <div id="cFeel"></div>
+      </section>
+      <section class="paper wide">
+        <div class="ph"><h2>어디서, 언제, 얼마나?</h2><p>장소 · 계절 · 걸리는 시간별 개수 · 막대에 마우스를 올리면 항목이 보여요</p></div>
+        <div class="sub3">
+          <div><h3>어디서</h3><div id="cPlace"></div></div>
+          <div><h3>어느 계절에</h3><div id="cSeason"></div></div>
+          <div><h3>얼마나 걸릴까</h3><div id="cDur"></div></div>
+        </div>
+      </section>
+      <section class="paper wide memo">
+        <span class="tape" aria-hidden="true"></span>
+        <div class="ph"><h2>나의 메모</h2><p>현황판을 보고 알게 된 나, 그리고 첫걸음</p></div>
+        <div class="memo-grid">
+          <div class="field">
+            <label for="note" id="noteL">나의 한 줄 해석</label>
+            <textarea id="note" rows="3" maxlength="80" placeholder="그래프를 보니 나는 ○○한 사람인 것 같다"></textarea>
+            <p class="hand noteview" id="noteView" hidden></p>
+          </div>
+          <div>
+            <h3 class="h3">첫걸음 체크리스트</h3>
+            <ul class="steps hand" id="steps"></ul>
+            <div id="pickWrap">
+              <button class="btn ghost small" type="button" id="pick" style="margin-top:12px">이번 달에 해볼 것 뽑기</button>
+              <p class="pickout hand" id="pickOut" role="status" aria-live="polite"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section class="paper" id="mylist" aria-labelledby="listH">
+      <div class="lhead"><h2 id="listH" style="font-size:19px">내 목록</h2></div>
+      <ul class="items" id="list"></ul>
+      <div class="danger-row">
+        <p>학교 컴퓨터를 썼다면 다 쓰고 지워주세요.</p>
+        <button class="btn ghost small" type="button" id="clr">전부 지우기</button>
+      </div>
+    </section>
+  </div>
+</div>
+
+<nav class="dock" id="dock" aria-label="바로가기">
+  <button type="button" data-go="write">적기</button>
+  <button type="button" data-go="dash">현황판</button>
+  <button type="button" class="primary" data-go="share">공유</button>
+</nav>
+
+<div class="overlay" id="share" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shareH">
+    <div class="sheet-head">
+      <h2 id="shareH">패들렛에 공유하기</h2>
+      <button class="btn ghost small" type="button" id="shareClose">닫기</button>
+    </div>
+    <p class="hint" id="shareEmpty" hidden>먼저 내 버킷리스트를 1개 이상 붙여주세요. 예시 항목은 공유되지 않아요.</p>
+    <div id="shareBody" style="display:grid;gap:20px">
+      <section class="sec">
+        <h3><span class="num">1</span>내 현황판 링크</h3>
+        <p class="hint">링크를 연 친구는 내 현황판을 보기만 할 수 있어요. 링크에는 지금까지 적은 내용이 담기니, 내용을 바꾸면 링크를 다시 복사해 주세요.</p>
+        <div class="copyrow">
+          <input id="linkOut" type="text" readonly aria-label="내 현황판 링크" value="링크를 만드는 중…">
+          <button class="btn" type="button" id="copyLink" disabled>링크 복사</button>
+        </div>
+      </section>
+      <section class="sec">
+        <h3><span class="num">2</span>패들렛에 올릴 글</h3>
+        <textarea id="postOut" rows="4" readonly aria-label="패들렛에 올릴 글"></textarea>
+        <div><button class="btn ghost small" type="button" id="copyPost" disabled>글 복사</button></div>
+      </section>
+      <section class="sec">
+        <h3><span class="num">3</span>결과 카드 이미지 <span class="opt" style="font-family:var(--font-body);font-size:12px;color:var(--ink2)">선택</span></h3>
+        <p class="hint">패들렛 글에 이미지로 함께 붙이면 친구들이 링크를 열지 않아도 한눈에 볼 수 있어요.</p>
+        <img class="cardimg" id="cardImg" alt="내 버킷리스트 결과 카드">
+        <div class="acts">
+          <button class="btn ghost small" type="button" id="saveImg" hidden>이미지 저장</button>
+          <button class="btn ghost small" type="button" id="copyImg" hidden>이미지 복사</button>
+        </div>
+        <p class="hint" style="text-align:center">이미지를 길게 누르거나 오른쪽 클릭해서 저장할 수도 있어요.</p>
+      </section>
+      <p class="msg" id="shareMsg" role="status" aria-live="polite"></p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<div class="tip" id="tip" role="tooltip"></div>
+
+<script>
+(function () {
+  'use strict';
+  var BASE = location.href.split('#')[0];
+  var KEY = 'bucket-dashboard-v2';
+  var MAX = 20;
+  var CATS = ['여행', '도전', '배움', '사람', '일·돈', '취미·재미', '갖고 싶은 것', '나 돌보기'];
+  var TYPES = [
+    ['지구 한 바퀴 탐험가', '새로운 곳에 가볼 생각만 해도 설레는 타입'],
+    ['한계 돌파 챌린저', '해본 적 없는 일에 뛰어드는 타입'],
+    ['호기심 수집가', '새로운 걸 배우고 익히는 게 즐거운 타입'],
+    ['추억 메이커', '소중한 사람들과 함께하는 순간을 모으는 타입'],
+    ['야무진 플래너', '미래를 단단하게 준비하는 타입'],
+    ['인생 즐김러', '좋아하는 것에 푹 빠지는 타입'],
+    ['위시리스트 컬렉터', '갖고 싶은 게 분명한 타입'],
+    ['마음 챙김러', '나를 아끼고 돌보는 게 중요한 타입']
+  ];
+  var DIFFS = ['쉬움', '보통', '어려움'];
+  var WITHS = ['혼자', '친구', '가족', '연인', '누구든'];
+  var PLACES = ['집·동네', '국내', '해외', '어디든'];
+  var DURS = ['하루면 돼', '일주일쯤', '한 달쯤', '1년 이상'];
+  var SEASONS = ['봄', '여름', '가을', '겨울', '언제든'];
+  var FEELS = ['설렘', '뿌듯함', '행복', '자유로움', '짜릿함', '편안함'];
+  var EMOJIS = ['🐱', '🐶', '🐰', '🦊', '🐻', '🐼', '🐸', '🐧', '🐥', '🌷', '🌈', '⭐'];
+  var SKINS = [['mint', '민트'], ['peach', '복숭아'], ['lemon', '레몬'], ['blue', '블루베리'], ['lilac', '라일락']];
+  var SKIN_HEX = {
+    mint: { acc: '#0e9a82', soft: '#d5f2eb', tint: '#eef8f5' },
+    peach: { acc: '#e2583a', soft: '#fde1d8', tint: '#fdf3ef' },
+    lemon: { acc: '#b07f00', soft: '#faedbd', tint: '#fcf8e8' },
+    blue: { acc: '#4766e8', soft: '#dfe5ff', tint: '#f1f4ff' },
+    lilac: { acc: '#8d5bd6', soft: '#ebdffb', tint: '#f6f1fd' }
+  };
+  var HEART_TXT = ['', '조금', '해보면 좋아', '하고 싶어', '정말 하고 싶어', '꼭 할 거야'];
+  var GROUPS = [
+    { key: 'cat', list: CATS }, { key: 'diff', list: DIFFS }, { key: 'with', list: WITHS },
+    { key: 'place', list: PLACES }, { key: 'dur', list: DURS }, { key: 'season', list: SEASONS }, { key: 'feel', list: FEELS, multi: true }
+  ];
+  var AGE_MIN = 20, AGE_MAX = 100;
+  var BUCKETS = [
+    { label: '무료', t: function (c) { return c === 0; } },
+    { label: '10만원 이하', t: function (c) { return c > 0 && c <= 10; } },
+    { label: '50만원 이하', t: function (c) { return c > 10 && c <= 50; } },
+    { label: '100만원 이하', t: function (c) { return c > 50 && c <= 100; } },
+    { label: '500만원 이하', t: function (c) { return c > 100 && c <= 500; } },
+    { label: '500만원 넘게', t: function (c) { return c > 500; } }
+  ];
+  var BOARD_COLS = DIFFS;
+  var BOARD_NAMES = [['당장 해보기', '곧 도전', '차근차근 준비'], ['심심할 때', '기회 되면', '언젠가 천천히']];
+
+  var EX = [
+    ['혼자 제주도 일주일 여행', '여행', 21, 80, 5, '보통', '혼자', '국내', '일주일쯤', '봄', ['자유로움', '설렘'], false, '항공권 가격 알아보기'],
+    ['운전면허 따기', '도전', 20, 90, 4, '보통', '혼자', '집·동네', '한 달쯤', '겨울', ['뿌듯함'], false, '운전학원 상담 받기'],
+    ['친구들과 유럽 배낭여행', '여행', 24, 400, 5, '어려움', '친구', '해외', '한 달쯤', '여름', ['설렘', '행복', '자유로움'], false, '여행 적금 만들기'],
+    ['좋아하는 가수 콘서트 앞줄에서 보기', '취미·재미', 20, 30, 5, '보통', '친구', '국내', '하루면 돼', '여름', ['짜릿함', '행복'], true, ''],
+    ['10km 마라톤 완주', '도전', 22, 5, 3, '어려움', '혼자', '집·동네', '한 달쯤', '가을', ['뿌듯함', '짜릿함'], false, '매일 2km 걷기'],
+    ['기타로 한 곡 끝까지 치기', '배움', 20, 20, 4, '쉬움', '혼자', '집·동네', '한 달쯤', '언제든', ['뿌듯함'], false, ''],
+    ['내 이름으로 된 적금 만들기', '일·돈', 20, 0, 3, '쉬움', '혼자', '집·동네', '하루면 돼', '언제든', ['편안함', '뿌듯함'], false, ''],
+    ['가족과 온천 여행', '사람', 21, 60, 4, '쉬움', '가족', '국내', '일주일쯤', '겨울', ['행복', '편안함'], false, ''],
+    ['바다 보이는 집에서 한 달 살기', '여행', 28, 300, 4, '어려움', '누구든', '국내', '한 달쯤', '여름', ['편안함', '자유로움'], false, ''],
+    ['내 차 갖기', '갖고 싶은 것', 27, 2500, 3, '어려움', '혼자', '어디든', '1년 이상', '언제든', ['뿌듯함', '자유로움'], false, ''],
+    ['하루 종일 아무것도 안 하고 쉬기', '나 돌보기', 20, 0, 5, '쉬움', '혼자', '집·동네', '하루면 돼', '겨울', ['편안함'], false, ''],
+    ['손주들과 세계 여행', '사람', 75, 1500, 4, '어려움', '가족', '해외', '한 달쯤', '언제든', ['행복', '설렘'], false, '']
+  ];
+  function exampleItems() {
+    return EX.map(function (r, i) {
+      return { id: 'ex' + i, ex: true, title: r[0], cat: r[1], age: r[2], cost: r[3], want: r[4], diff: r[5], with: r[6], place: r[7], dur: r[8], season: r[9], feel: r[10].slice(), done: r[11], step: r[12] };
+    });
+  }
+
+  var state = { name: '', emoji: EMOJIS[0], skin: 'mint', note: '', items: exampleItems() };
+  var shared = null;
+  var mode = 'own';
+  var storageOk = true;
+  var editingId = null;
+
+  /* 도구 */
+  function $(id) { return document.getElementById(id); }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; });
+  }
+  function clamp(n, a, b) { return Math.min(b, Math.max(a, n)); }
+  function fmtMan(n) {
+    if (n === 0) return '0원';
+    if (n >= 10000) return (Math.round(n / 1000) / 10).toLocaleString('ko-KR') + '억원';
+    return n.toLocaleString('ko-KR') + '만원';
+  }
+  function fmtCost(n) { return n === 0 ? '무료' : fmtMan(n); }
+  function hash(s) { var x = 0; for (var i = 0; i < s.length; i++) x = (x * 31 + s.charCodeAt(i)) >>> 0; return x; }
+  function cur() { return mode === 'shared' && shared ? shared : state; }
+  function ownItems() { return state.items.filter(function (i) { return !i.ex; }); }
+  function countBy(items, key, list) {
+    return list.map(function (v) {
+      var l = items.filter(function (i) { var x = i[key]; return Array.isArray(x) ? x.indexOf(v) >= 0 : x === v; });
+      return { label: v, n: l.length, list: l };
+    });
+  }
+  function displayName(st) { return st.name || (mode === 'shared' ? '친구' : '나'); }
+  function typeOf(items) {
+    if (!items.length) return null;
+    var c = countBy(items, 'cat', CATS);
+    var best = 0;
+    c.forEach(function (r, i) { if (r.n > c[best].n) best = i; });
+    if (!c[best].n) return null;
+    return { name: TYPES[best][0], desc: TYPES[best][1] };
+  }
+
+  /* 저장 */
+  function load() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (!raw) return;
+      var s = JSON.parse(raw);
+      if (s && Array.isArray(s.items)) {
+        state.name = typeof s.name === 'string' ? s.name.slice(0, 20) : '';
+        state.emoji = EMOJIS.indexOf(s.emoji) >= 0 ? s.emoji : EMOJIS[0];
+        state.skin = SKIN_HEX[s.skin] ? s.skin : 'mint';
+        state.note = typeof s.note === 'string' ? s.note.slice(0, 80) : '';
+        state.items = s.items.filter(function (i) { return i && typeof i.title === 'string'; }).slice(0, MAX + EX.length);
+        state.items.forEach(function (i) {
+          if (!Array.isArray(i.feel)) i.feel = i.feel ? [i.feel] : [];
+          i.feel = i.feel.filter(function (f) { return FEELS.indexOf(f) >= 0; });
+        });
+      }
+    } catch (e) { storageOk = false; }
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { storageOk = false; }
+  }
+
+  /* 링크에 담기 */
+  function pack(st) {
+    var items = st.items.filter(function (i) { return !i.ex; }).slice(0, MAX).map(function (it) {
+      var r = [it.title, CATS.indexOf(it.cat), it.age, it.cost, it.want, DIFFS.indexOf(it.diff), WITHS.indexOf(it.with), PLACES.indexOf(it.place), DURS.indexOf(it.dur), SEASONS.indexOf(it.season),
+        (it.feel || []).map(function (f) { return FEELS.indexOf(f); }).filter(function (k) { return k >= 0; }), it.done ? 1 : 0];
+      if (it.step) r.push(it.step);
+      return r;
+    });
+    return { v: 2, n: st.name, e: EMOJIS.indexOf(st.emoji), s: SKINS.map(function (k) { return k[0]; }).indexOf(st.skin), o: st.note, i: items };
+  }
+  function str(v, max) { return typeof v === 'string' ? v.trim().slice(0, max) : ''; }
+  function int(v, a, b, d) { var n = Math.round(Number(v)); return isFinite(n) ? clamp(n, a, b) : d; }
+  function pick(list, i) { return typeof i === 'number' && list[i] !== undefined ? list[i] : null; }
+  function unpackFeel(v) {
+    var arr = Array.isArray(v) ? v : [v];
+    var out = [];
+    arr.slice(0, FEELS.length).forEach(function (k) { var f = pick(FEELS, k); if (f && out.indexOf(f) < 0) out.push(f); });
+    return out;
+  }
+  function unpack(o) {
+    if (!o || o.v !== 2 || !Array.isArray(o.i)) return null;
+    var items = o.i.slice(0, MAX).map(function (r, k) {
+      if (!Array.isArray(r)) return null;
+      var title = str(r[0], 30);
+      if (!title) return null;
+      return {
+        id: 's' + k, title: title, cat: pick(CATS, r[1]), age: int(r[2], 15, AGE_MAX, 20), cost: int(r[3], 0, 100000, 0),
+        want: int(r[4], 1, 5, 3), diff: pick(DIFFS, r[5]), with: pick(WITHS, r[6]), place: pick(PLACES, r[7]),
+        dur: pick(DURS, r[8]), season: pick(SEASONS, r[9]), feel: unpackFeel(r[10]), done: r[11] === 1, step: str(r[12], 30)
+      };
+    }).filter(Boolean);
+    return {
+      name: str(o.n, 20), emoji: pick(EMOJIS, o.e) || EMOJIS[0],
+      skin: SKINS[o.s] ? SKINS[o.s][0] : 'mint', note: str(o.o, 80), items: items
+    };
+  }
+  function toB64u(bytes) {
+    var s = '';
+    for (var i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function fromB64u(t) {
+    t = t.replace(/-/g, '+').replace(/_/g, '/');
+    while (t.length % 4) t += '=';
+    var bin = atob(t), out = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+  async function pipe(bytes, stream) {
+    var s = new Blob([bytes]).stream().pipeThrough(stream);
+    return new Uint8Array(await new Response(s).arrayBuffer());
+  }
+  async function makeToken(st) {
+    var bytes = new TextEncoder().encode(JSON.stringify(pack(st)));
+    if (typeof CompressionStream === 'function') {
+      try { return 'b2z' + toB64u(await pipe(bytes, new CompressionStream('deflate-raw'))); } catch (e) { /* 압축 없이 */ }
+    }
+    return 'b2j' + toB64u(bytes);
+  }
+  async function readToken(tok) {
+    try {
+      var kind = tok.slice(0, 3), body = tok.slice(3);
+      if (!/^[A-Za-z0-9_-]+$/.test(body)) return null;
+      var bytes = fromB64u(body);
+      if (kind === 'b2z') {
+        if (typeof DecompressionStream !== 'function') return 'old';
+        bytes = await pipe(bytes, new DecompressionStream('deflate-raw'));
+      } else if (kind !== 'b2j') return null;
+      return unpack(JSON.parse(new TextDecoder().decode(bytes)));
+    } catch (e) { return null; }
+  }
+
+  /* 고정 요소 만들기 */
+  function buildStatic() {
+    GROUPS.forEach(function (g) {
+      $('c-' + g.key).innerHTML = g.list.map(function (v, i) {
+        var id = 'r-' + g.key + '-' + i;
+        return '<input type="' + (g.multi ? 'checkbox' : 'radio') + '" name="' + g.key + '" id="' + id + '" value="' + esc(v) + '"><label for="' + id + '">' + esc(v) + '</label>';
+      }).join('');
+    });
+    $('ageQuick').innerHTML = [20, 25, 30, 40, 50, 60, 70, 80, 90, 100].map(function (a) {
+      return '<button type="button" data-age="' + a + '">' + a + '살</button>';
+    }).join('');
+    var h = '';
+    for (var i = 1; i <= 5; i++) h += '<input type="radio" name="want" id="want-' + i + '" value="' + i + '"' + (i === 3 ? ' checked' : '') + '><label for="want-' + i + '" aria-label="' + i + '점, ' + HEART_TXT[i] + '">♥</label>';
+    $('hearts').innerHTML = h;
+    $('costQuick').innerHTML = [[0, '무료'], [10, '10만'], [50, '50만'], [100, '100만'], [500, '500만'], [1000, '1000만']].map(function (q) {
+      return '<button type="button" data-cost="' + q[0] + '">' + q[1] + '</button>';
+    }).join('');
+    $('emojis').innerHTML = EMOJIS.map(function (e, i) {
+      return '<button type="button" class="emo" id="emo-' + i + '" data-emo="' + i + '" aria-label="스티커 ' + (i + 1) + '" aria-pressed="false">' + e + '</button>';
+    }).join('');
+    $('skins').innerHTML = SKINS.map(function (s) {
+      return '<button type="button" class="skin" id="skin-' + s[0] + '" data-skin="' + s[0] + '" aria-pressed="false"><i></i>' + s[1] + '</button>';
+    }).join('');
+    var now = new Date();
+    var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var ny = new Date(now.getFullYear() + 1, 0, 1);
+    $('dday').textContent = 'D-' + Math.round((ny - today) / 86400000);
+  }
+
+  /* 그리기 */
+  function applySkin(skin) { document.documentElement.setAttribute('data-skin', skin); }
+
+  function renderChrome() {
+    var st = cur();
+    var shr = mode === 'shared';
+    $('app').classList.toggle('shared', shr);
+    ['deco', 'write', 'mylist'].forEach(function (id) { $(id).hidden = shr; });
+    $('shareBtn').hidden = shr;
+    $('viewing').hidden = !shr;
+    $('viewingName').textContent = displayName(st);
+    $('exStrip').hidden = shr || !state.items.some(function (i) { return i.ex; });
+    $('note').hidden = shr; $('noteView').hidden = !shr;
+    $('noteL').hidden = false;
+    if (shr) $('noteView').textContent = st.note || '아직 적지 않았어요.';
+    $('pickWrap').hidden = shr;
+    applySkin(st.skin);
+    if (!shr) {
+      EMOJIS.forEach(function (e, i) { $('emo-' + i).setAttribute('aria-pressed', String(e === state.emoji)); });
+      SKINS.forEach(function (s) { $('skin-' + s[0]).setAttribute('aria-pressed', String(s[0] === state.skin)); });
+    }
+  }
+
+  function renderHero() {
+    var st = cur(), items = st.items, n = items.length;
+    $('heroName').innerHTML = '<span class="nmw">' + esc(displayName(st) + '의') + '</span> 버킷리스트';
+    $('avatar').textContent = st.emoji;
+    var t = typeOf(items);
+    $('typeName').textContent = t ? t.name : '아직 몰라요';
+    $('typeDesc').textContent = t ? t.desc : '버킷리스트를 붙이면 유형이 나타나요.';
+    var total = items.reduce(function (s, i) { return s + i.cost; }, 0);
+    var done = items.filter(function (i) { return i.done; }).length;
+    var avg = n ? (items.reduce(function (s, i) { return s + i.want; }, 0) / n) : 0;
+    var pct = n ? Math.round(done / n * 100) : 0;
+    $('stats').innerHTML =
+      '<div class="stat"><span class="k">버킷리스트</span><span class="v">' + n + '<small>개</small></span></div>' +
+      '<div class="stat"><span class="k">모두 이루려면</span><span class="v">' + esc(fmtMan(total)) + '</span></div>' +
+      '<div class="stat"><span class="k">하고 싶은 정도 평균</span><span class="v"><span class="hrt">♥</span>' + (n ? avg.toFixed(1) : '-') + '</span></div>' +
+      '<div class="stat"><span class="k">이룬 것</span><span class="v">' + done + '<small>/ ' + n + '</small></span><div class="prog" role="img" aria-label="' + pct + '% 이룸"><span style="width:' + pct + '%"></span></div></div>';
+  }
+
+  function emptyMsg() { return '<p class="empty">버킷리스트를 붙이면 여기에 그래프가 나타나요.</p>'; }
+  function titlesTip(head, list) {
+    return head + list.slice(0, 5).map(function (i) { return '\n· ' + i.title; }).join('') + (list.length > 5 ? '\n외 ' + (list.length - 5) + '개' : '');
+  }
+  function barsHtml(rows, opts) {
+    opts = opts || {};
+    var max = Math.max.apply(null, rows.map(function (r) { return r.n; }).concat([0]));
+    return '<div class="bars' + (opts.long ? ' long' : '') + '">' + rows.map(function (r) {
+      var top = max > 0 && r.n === max;
+      var w = max ? r.n / max * 100 : 0;
+      var tip = r.tip || (r.list ? titlesTip(r.label + ' ' + r.n + '개', r.list) : '');
+      var val = r.val !== undefined ? r.val : r.n + '개';
+      return '<div class="brow' + (top ? ' top' : '') + (r.n === 0 ? ' zero' : '') + '"' + (tip ? ' data-tip="' + esc(tip) + '"' : '') + '>' +
+        '<span class="bl" title="' + esc(r.label) + '">' + esc(r.label) + '</span>' +
+        '<span class="track"><span class="fill" style="width:' + w + '%"></span></span>' +
+        '<span class="bv">' + esc(val) + '</span></div>';
+    }).join('') + '</div>';
+  }
+  function chipHtml(it) {
+    return '<span class="chip' + (it.done ? ' done' : '') + '">' + esc(it.title) + '</span>';
+  }
+
+  function renderTime(items) {
+    if (!items.length) return emptyMsg();
+    var ages = {};
+    items.forEach(function (i) { (ages[i.age] = ages[i.age] || []).push(i); });
+    var keys = Object.keys(ages).map(Number).sort(function (a, b) { return a - b; });
+    var max = Math.max.apply(null, keys.map(function (k) { return ages[k].length; }));
+    return '<ol class="tl">' + keys.map(function (k) {
+      var l = ages[k];
+      return '<li class="tl-row' + (l.length === max ? ' top' : '') + '"><span class="tl-age"><b>' + k + '살</b><small>' + l.length + '개</small></span><span class="tl-node" aria-hidden="true"></span><div class="tl-items">' + l.map(chipHtml).join('') + '</div></li>';
+    }).join('') + '</ol>';
+  }
+
+  function renderCat(items) {
+    if (!items.length) return emptyMsg();
+    var rows = countBy(items, 'cat', CATS).map(function (r, i) { r.idx = i; return r; });
+    rows.sort(function (a, b) { return b.n - a.n || a.idx - b.idx; });
+    return barsHtml(rows);
+  }
+
+  function renderCost(items) {
+    if (!items.length) return emptyMsg();
+    var top = items.slice().sort(function (a, b) { return b.cost - a.cost; }).filter(function (i) { return i.cost > 0; }).slice(0, 5);
+    var topRows = top.map(function (i) { return { label: i.title, n: i.cost, val: fmtMan(i.cost), tip: i.title + '\n' + fmtMan(i.cost) }; });
+    var buckets = BUCKETS.map(function (b) { var l = items.filter(function (i) { return b.t(i.cost); }); return { label: b.label, n: l.length, list: l }; });
+    return '<div class="split"><div><h3 class="h3">비싼 순서 TOP 5</h3>' + (topRows.length ? barsHtml(topRows, { long: true }) : '<p class="empty">돈이 드는 항목이 아직 없어요.</p>') + '</div>' +
+      '<div><h3 class="h3">가격대별 개수</h3>' + barsHtml(buckets, { long: true }) + '</div></div>';
+  }
+
+  function renderBoard(items) {
+    if (!items.length) return emptyMsg();
+    var head = '<span class="bh cornr"></span>' + BOARD_COLS.map(function (c) { return '<span class="bh">' + esc(c) + '</span>'; }).join('');
+    var rows = [['꼭 하고 싶어', function (i) { return i.want >= 4; }], ['하면 좋아', function (i) { return i.want <= 3; }]];
+    var body = rows.map(function (row, ri) {
+      return '<span class="rowlab">' + row[0] + '</span>' + BOARD_COLS.map(function (c, ci) {
+        var l = items.filter(function (i) { return row[1](i) && i.diff === c; });
+        var go = ri === 0 && ci === 0;
+        return '<div class="cell' + (go ? ' go' : '') + '"><div class="cell-h"><b>' + BOARD_NAMES[ri][ci] + '</b><span>' + l.length + '개</span></div><div class="cell-items">' + l.map(chipHtml).join('') + '</div></div>';
+      }).join('');
+    }).join('');
+    return '<div class="board-cap"><span>↑ 위 칸일수록 하고 싶은 정도 ♥4~5</span><span>어려운 정도 →</span></div><div class="board">' + head + body + '</div>';
+  }
+
+  function renderFeel(items) {
+    if (!items.length) return emptyMsg();
+    var rows = countBy(items, 'feel', FEELS);
+    var max = Math.max.apply(null, rows.map(function (r) { return r.n; }));
+    return '<div class="cloud">' + rows.map(function (r) {
+      var size = r.n ? 15 + Math.round(r.n / max * 17) : 14;
+      var cls = r.n === 0 ? ' zero' : (r.n === max ? ' top' : '');
+      return '<span class="fchip' + cls + '" style="font-size:' + size + 'px"' + (r.n ? ' data-tip="' + esc(titlesTip(r.label + ' ' + r.n + '개', r.list)) + '"' : '') + '>' + esc(r.label) + '<small>' + r.n + '</small></span>';
+    }).join('') + '</div>';
+  }
+
+  function renderMemo(st) {
+    var items = st.items;
+    var withStep = items.filter(function (i) { return i.step && !i.done; }).sort(function (a, b) { return b.want - a.want; }).slice(0, 5);
+    $('steps').innerHTML = withStep.length ? withStep.map(function (i) {
+      return '<li><span>' + esc(i.step) + ' <span class="arrow">→ ' + esc(i.title) + '</span></span></li>';
+    }).join('') : '<li class="hint" style="font-family:var(--font-body);font-size:13px;display:block">버킷리스트를 적을 때 첫걸음을 쓰면 여기에 모여요.</li>';
+  }
+
+  function renderList() {
+    var items = state.items;
+    $('listH').textContent = '내 목록 (' + items.length + ')';
+    if (!items.length) { $('list').innerHTML = '<li class="empty">아직 항목이 없어요.</li>'; return; }
+    $('list').innerHTML = items.slice().reverse().map(function (it) {
+      var meta = [it.cat, it.age + '살', fmtCost(it.cost), '♥' + it.want, it.diff, it.with, it.place, it.season].filter(Boolean).join(' · ');
+      var eid = esc(it.id);
+      return '<li class="item' + (it.done ? ' done' : '') + '">' +
+        '<input type="checkbox" id="dn-' + eid + '" data-done="' + eid + '"' + (it.done ? ' checked' : '') + ' aria-label="이뤘어요: ' + esc(it.title) + '">' +
+        '<div><div class="tt">' + esc(it.title) + (it.ex ? '<span class="tag">예시</span>' : '') + '</div><div class="mm">' + esc(meta) + '</div></div>' +
+        '<div class="ia"><button type="button" class="lnk" id="ed-' + eid + '" data-edit="' + eid + '">수정</button><button type="button" class="lnk" id="rm-' + eid + '" data-rm="' + eid + '">삭제</button></div></li>';
+    }).join('');
+  }
+
+  function render() {
+    var act = document.activeElement && document.activeElement.id;
+    var st = cur(), items = st.items;
+    renderChrome();
+    renderHero();
+    $('cTime').innerHTML = renderTime(items);
+    $('cCat').innerHTML = renderCat(items);
+    $('cCost').innerHTML = renderCost(items);
+    $('cBoard').innerHTML = renderBoard(items);
+    $('cWith').innerHTML = items.length ? barsHtml(countBy(items, 'with', WITHS)) : emptyMsg();
+    $('cFeel').innerHTML = renderFeel(items);
+    $('cPlace').innerHTML = items.length ? barsHtml(countBy(items, 'place', PLACES)) : emptyMsg();
+    $('cSeason').innerHTML = items.length ? barsHtml(countBy(items, 'season', SEASONS)) : emptyMsg();
+    $('cDur').innerHTML = items.length ? barsHtml(countBy(items, 'dur', DURS)) : emptyMsg();
+    renderMemo(st);
+    if (mode !== 'shared') renderList();
+    if (act) { var el = $(act); if (el && el !== document.activeElement) el.focus({ preventScroll: true }); }
+  }
+
+  /* 알림 */
+  var toastT;
+  function toast(text, action, fn) {
+    var t = $('toast');
+    t.innerHTML = '<span></span>';
+    t.firstChild.textContent = text;
+    if (action) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.id = 'toastAct'; b.textContent = action;
+      b.addEventListener('click', function () { t.hidden = true; fn(); });
+      t.appendChild(b);
+    }
+    t.hidden = false;
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { t.hidden = true; }, 5000);
+  }
+  function setStatus(text, err) { var s = $('status'); s.textContent = text; s.classList.toggle('err', !!err); }
+
+  /* 입력 */
+  function getRadio(name) { var el = document.querySelector('input[name="' + name + '"]:checked'); return el ? el.value : null; }
+  function getChecks(name) { return Array.prototype.map.call(document.querySelectorAll('input[name="' + name + '"]:checked'), function (el) { return el.value; }); }
+  function setRadio(name, value) {
+    var els = document.getElementsByName(name);
+    for (var i = 0; i < els.length; i++) els[i].checked = value !== null && els[i].value === String(value);
+  }
+  function setChecks(name, values) {
+    var els = document.getElementsByName(name);
+    for (var i = 0; i < els.length; i++) els[i].checked = (values || []).indexOf(els[i].value) >= 0;
+  }
+  function setGroup(g, v) { if (g.multi) setChecks(g.key, Array.isArray(v) ? v : (v ? [v] : [])); else setRadio(g.key, v); }
+  function setHearts(v) { setRadio('want', v); $('hearts').setAttribute('data-val', v); $('heartsTxt').textContent = HEART_TXT[v]; }
+  function setAge(v) { v = clamp(v, AGE_MIN, AGE_MAX); $('fage').value = v; $('fageOut').textContent = v + '살'; }
+  function clearMissing() { document.querySelectorAll('.field.missing').forEach(function (el) { el.classList.remove('missing'); }); }
+
+  function resetForm() {
+    $('ftitle').value = ''; $('fstep').value = ''; $('fcost').value = 0;
+    GROUPS.forEach(function (g) { setGroup(g, null); });
+    setHearts(3);
+    editingId = null;
+    $('fsubmit').textContent = '현황판에 붙이기';
+    $('fcancel').hidden = true;
+    clearMissing();
+  }
+
+  $('hearts').addEventListener('change', function (e) { if (e.target.name === 'want') setHearts(Number(e.target.value)); });
+  $('fage').addEventListener('input', function () { setAge(Number(this.value)); });
+  $('ageMinus').addEventListener('click', function () { setAge(Number($('fage').value) - 1); });
+  $('agePlus').addEventListener('click', function () { setAge(Number($('fage').value) + 1); });
+  $('costQuick').addEventListener('click', function (e) { var b = e.target.closest('[data-cost]'); if (b) $('fcost').value = b.getAttribute('data-cost'); });
+  $('ageQuick').addEventListener('click', function (e) { var b = e.target.closest('[data-age]'); if (b) setAge(Number(b.getAttribute('data-age'))); });
+  $('f').addEventListener('change', function (e) {
+    var fs = e.target.closest('.field');
+    if (fs) fs.classList.remove('missing');
+  });
+  $('ftitle').addEventListener('input', function () { $('g-title').classList.remove('missing'); });
+
+  $('f').addEventListener('submit', function (e) {
+    e.preventDefault();
+    clearMissing();
+    var title = $('ftitle').value.trim();
+    var vals = {};
+    var missing = [];
+    if (!title) missing.push('g-title');
+    GROUPS.forEach(function (g) {
+      vals[g.key] = g.multi ? getChecks(g.key) : getRadio(g.key);
+      if (!vals[g.key] || (g.multi && !vals[g.key].length)) missing.push('g-' + g.key);
+    });
+    if (missing.length) {
+      missing.forEach(function (id) { $(id).classList.add('missing'); });
+      setStatus('빨간 글씨가 붙은 칸을 채워주세요. (' + missing.length + '곳)', true);
+      $(missing[0]).scrollIntoView({ block: 'center', behavior: 'smooth' });
+      return;
+    }
+    if (!editingId && ownItems().length >= MAX) { setStatus('현황판에는 ' + MAX + '개까지 붙일 수 있어요.', true); return; }
+    var item = {
+      title: title, cat: vals.cat, age: clamp(Number($('fage').value) || AGE_MIN, AGE_MIN, AGE_MAX),
+      cost: clamp(Math.round(Number($('fcost').value) || 0), 0, 100000),
+      want: clamp(Number(getRadio('want')) || 3, 1, 5), diff: vals.diff, with: vals['with'], place: vals.place,
+      dur: vals.dur, season: vals.season, feel: vals.feel, step: $('fstep').value.trim()
+    };
+    var wasEdit = !!editingId;
+    if (editingId) {
+      state.items = state.items.map(function (i) { if (i.id !== editingId) return i; item.id = i.id; item.done = i.done; return item; });
+    } else {
+      item.id = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      item.done = false;
+      state.items = ownItems();
+      state.items.push(item);
+    }
+    save();
+    resetForm();
+    render();
+    setStatus(wasEdit ? '고쳤어요.' : '현황판에 붙였어요. (' + ownItems().length + '/' + MAX + ')');
+    if (window.innerWidth < 1000) toast(wasEdit ? '고쳤어요.' : '현황판에 붙였어요.', '현황판 보기', function () { goTo('dash'); });
+    $('ftitle').focus({ preventScroll: true });
+  });
+  $('fcancel').addEventListener('click', function () { resetForm(); setStatus(''); });
+
+  function startEdit(id) {
+    var it = state.items.find(function (i) { return i.id === id; });
+    if (!it) return;
+    if (it.ex) { state.items = ownItems(); save(); render(); }
+    clearMissing();
+    $('ftitle').value = it.title; $('fstep').value = it.step || ''; $('fcost').value = it.cost;
+    setAge(it.age); setHearts(it.want);
+    GROUPS.forEach(function (g) { setGroup(g, it[g.key]); });
+    if (it.ex) { editingId = null; $('fsubmit').textContent = '현황판에 붙이기'; $('fcancel').hidden = false; setStatus('예시를 불러왔어요. 내 것으로 고쳐서 붙여보세요.'); }
+    else { editingId = id; $('fsubmit').textContent = '수정 완료'; $('fcancel').hidden = false; setStatus('\'' + it.title + '\' 고치는 중'); }
+    goTo('write');
+    $('ftitle').focus({ preventScroll: true });
+  }
+
+  /* 꾸미기 */
+  $('nick').addEventListener('input', function () { state.name = this.value.trim(); save(); renderHero(); });
+  $('emojis').addEventListener('click', function (e) { var b = e.target.closest('[data-emo]'); if (!b) return; state.emoji = EMOJIS[Number(b.getAttribute('data-emo'))]; save(); renderChrome(); renderHero(); });
+  $('skins').addEventListener('click', function (e) { var b = e.target.closest('[data-skin]'); if (!b) return; state.skin = b.getAttribute('data-skin'); save(); renderChrome(); });
+  $('note').addEventListener('input', function () { state.note = this.value; save(); });
+  $('clearEx').addEventListener('click', function () { state.items = ownItems(); save(); render(); goTo('write'); $('ftitle').focus({ preventScroll: true }); });
+
+  /* 목록 */
+  $('list').addEventListener('change', function (e) {
+    var id = e.target.getAttribute('data-done');
+    if (!id) return;
+    state.items.forEach(function (i) { if (i.id === id) i.done = e.target.checked; });
+    save(); render();
+  });
+  $('list').addEventListener('click', function (e) {
+    var ed = e.target.getAttribute('data-edit');
+    if (ed) { startEdit(ed); return; }
+    var id = e.target.getAttribute('data-rm');
+    if (!id) return;
+    var idx = state.items.findIndex(function (i) { return i.id === id; });
+    if (idx < 0) return;
+    var removed = state.items.splice(idx, 1)[0];
+    if (editingId === id) resetForm();
+    save(); render();
+    toast('\'' + removed.title + '\' 삭제했어요.', '되돌리기', function () { state.items.splice(idx, 0, removed); save(); render(); });
+  });
+  var armed = false, armT;
+  function disarm() { armed = false; clearTimeout(armT); $('clr').textContent = '전부 지우기'; }
+  $('clr').addEventListener('click', function () {
+    if (!armed) { armed = true; $('clr').textContent = '정말 지울까요? 한 번 더 누르세요'; armT = setTimeout(disarm, 4000); return; }
+    disarm();
+    state = { name: '', emoji: EMOJIS[0], skin: 'mint', note: '', items: [] };
+    try { localStorage.removeItem(KEY); } catch (e) { /* 무시 */ }
+    $('nick').value = ''; $('note').value = '';
+    resetForm(); render();
+    toast('저장된 내용을 모두 지웠어요.');
+  });
+
+  var lastPick = '';
+  $('pick').addEventListener('click', function () {
+    var open = state.items.filter(function (i) { return !i.done; });
+    var pool = open.filter(function (i) { return i.want >= 4 && i.diff !== '어려움' && i.cost <= 100; });
+    if (!pool.length) pool = open.filter(function (i) { return i.cost <= 100; });
+    if (!pool.length) { $('pickOut').textContent = '뽑을 항목이 없어요. 100만원 이하로 할 수 있는 걸 하나 붙여보세요.'; return; }
+    var c = pool[Math.floor(Math.random() * pool.length)];
+    if (pool.length > 1 && c.title === lastPick) c = pool[(pool.indexOf(c) + 1) % pool.length];
+    lastPick = c.title;
+    $('pickOut').textContent = '이번 달엔 "' + c.title + '"' + (c.step ? ' → 첫걸음: ' + c.step : ' → 오늘 할 수 있는 첫걸음을 하나 정해봐요!');
+  });
+
+  /* 이동 */
+  function goTo(where) {
+    if (where === 'share') { openShare(); return; }
+    var el = $(where);
+    if (el) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  }
+  $('dock').addEventListener('click', function (e) { var b = e.target.closest('[data-go]'); if (b) goTo(b.getAttribute('data-go')); });
+
+  /* 공유 */
+  var linkCache = '', postCache = '', cardBlob = null, lastFocus = null;
+  function msg(t) { $('shareMsg').textContent = t; }
+  async function openShare() {
+    lastFocus = document.activeElement;
+    $('share').hidden = false;
+    $('shareClose').focus();
+    msg('');
+    var has = ownItems().length > 0;
+    $('shareEmpty').hidden = has;
+    $('shareBody').hidden = !has;
+    if (!has) return;
+    linkCache = ''; postCache = ''; cardBlob = null;
+    $('linkOut').value = '링크를 만드는 중…';
+    $('copyLink').disabled = true; $('copyPost').disabled = true;
+    $('saveImg').hidden = true; $('copyImg').hidden = true;
+    try {
+      var tok = await makeToken(state);
+      linkCache = BASE + '#' + tok;
+      var t = typeOf(ownItems());
+      postCache = state.emoji + ' ' + (state.name || '익명') + '의 버킷리스트 현황판\n나의 유형: ' + (t ? t.name : '-') + '\n' + linkCache;
+      $('linkOut').value = linkCache;
+      $('postOut').value = postCache;
+      $('copyLink').disabled = false; $('copyPost').disabled = false;
+    } catch (e) { $('linkOut').value = '링크를 만들지 못했어요. 다시 열어주세요.'; }
+    try {
+      var canvas = await drawCard(state);
+      $('cardImg').src = canvas.toDataURL('image/png');
+      canvas.toBlob(function (b) {
+        cardBlob = b;
+        if (!b) return;
+        $('saveImg').hidden = false;
+        $('copyImg').hidden = !(window.ClipboardItem && navigator.clipboard && navigator.clipboard.write);
+      }, 'image/png');
+    } catch (e) { /* 카드 없이 */ }
+  }
+  function closeShare() { $('share').hidden = true; if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true }); }
+  $('shareBtn').addEventListener('click', openShare);
+  $('shareClose').addEventListener('click', closeShare);
+  $('share').addEventListener('click', function (e) { if (e.target === this) closeShare(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('share').hidden) closeShare(); });
+
+  function copyText(text, inputEl, okMsg) {
+    var fallback = function () { inputEl.focus(); inputEl.select(); msg('자동 복사가 안 돼요. 선택된 글자를 직접 복사(Ctrl+C)해 주세요.'); };
+    try { navigator.clipboard.writeText(text).then(function () { msg(okMsg); }, fallback); } catch (e) { fallback(); }
+  }
+  $('copyLink').addEventListener('click', function () { if (linkCache) copyText(linkCache, $('linkOut'), '링크를 복사했어요. 패들렛 글에 붙여넣으세요.'); });
+  $('copyPost').addEventListener('click', function () { if (postCache) copyText(postCache, $('postOut'), '글을 복사했어요. 패들렛 글쓰기 칸에 붙여넣으세요.'); });
+  $('copyImg').addEventListener('click', function () {
+    if (!cardBlob) return;
+    try {
+      navigator.clipboard.write([new ClipboardItem({ 'image/png': cardBlob })]).then(function () { msg('이미지를 복사했어요. 패들렛 글쓰기 칸에 붙여넣으세요.'); }, function () { msg('이 화면에서는 이미지 복사가 안 돼요. 이미지를 길게 누르거나 오른쪽 클릭해서 저장해 주세요.'); });
+    } catch (e) { msg('이 화면에서는 이미지 복사가 안 돼요. 이미지를 길게 누르거나 오른쪽 클릭해서 저장해 주세요.'); }
+  });
+  $('saveImg').addEventListener('click', function () {
+    if (!cardBlob) return;
+    try {
+      var href = URL.createObjectURL(cardBlob);
+      var a = document.createElement('a');
+      a.href = href;
+      a.download = 'my-bucket-list.png';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(href); }, 4000);
+      msg('이미지를 저장했어요. 다운로드 폴더를 확인해 보세요.');
+    } catch (e) {
+      msg('저장이 안 돼요. 이미지를 길게 누르거나 오른쪽 클릭해서 저장해 주세요.');
+    }
+  });
+
+  /* 결과 카드 */
+  function rgba(hex, a) { var n = parseInt(hex.slice(1), 16); return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')'; }
+  function rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+  function fit(g, text, max) {
+    if (g.measureText(text).width <= max) return text;
+    while (text.length > 1 && g.measureText(text + '…').width > max) text = text.slice(0, -1);
+    return text + '…';
+  }
+  async function drawCard(st) {
+    var C = SKIN_HEX[st.skin] || SKIN_HEX.mint;
+    var INK = '#23211f', INK2 = '#5d5a55', RULE = '#e4e1da';
+    var D = 'Jua, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+    var B = '"Gowun Dodum", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+    try { await Promise.all([document.fonts.load('60px Jua'), document.fonts.load('30px "Gowun Dodum"')]); } catch (e) { /* 기본 글꼴 */ }
+    var items = st.items.filter(function (i) { return !i.ex; });
+    var c = document.createElement('canvas'); c.width = 1080; c.height = 1350;
+    var g = c.getContext('2d');
+    g.fillStyle = C.tint; g.fillRect(0, 0, 1080, 1350);
+    g.strokeStyle = rgba(C.acc, 0.12); g.lineWidth = 2;
+    for (var x = 0; x <= 1080; x += 40) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, 1350); g.stroke(); }
+    for (var y = 0; y <= 1350; y += 40) { g.beginPath(); g.moveTo(0, y); g.lineTo(1080, y); g.stroke(); }
+    g.save(); g.shadowColor = 'rgba(35,33,31,0.16)'; g.shadowBlur = 40; g.shadowOffsetY = 14;
+    rr(g, 60, 80, 960, 1200, 40); g.fillStyle = '#ffffff'; g.fill(); g.restore();
+    g.save(); g.translate(190, 82); g.rotate(-0.06); g.fillStyle = rgba(C.acc, 0.38); g.fillRect(-90, -24, 180, 48); g.restore();
+    g.save(); g.translate(900, 86); g.rotate(0.08); g.fillStyle = rgba(C.acc, 0.3); g.fillRect(-70, -22, 140, 44); g.restore();
+    // 스티커
+    g.beginPath(); g.arc(200, 250, 82, 0, Math.PI * 2); g.fillStyle = C.soft; g.fill();
+    g.font = '96px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText(st.emoji, 200, 256);
+    // 이름
+    g.textAlign = 'left'; g.textBaseline = 'alphabetic';
+    g.fillStyle = INK2; g.font = '30px ' + B; g.fillText('성인이 되면 하고 싶은 것들', 312, 200);
+    var nm = (st.name || '익명') + '의 버킷리스트';
+    var fs = 62; g.font = fs + 'px ' + D;
+    while (g.measureText(nm).width > 650 && fs > 40) { fs -= 2; g.font = fs + 'px ' + D; }
+    g.fillStyle = INK; g.fillText(fit(g, nm, 650), 312, 272);
+    var t = typeOf(items);
+    g.font = '34px ' + D;
+    var tl = '나의 유형 · ' + (t ? t.name : '-');
+    var tw = Math.min(g.measureText(tl).width + 44, 660);
+    rr(g, 310, 300, tw, 58, 29); g.fillStyle = C.soft; g.fill();
+    g.fillStyle = INK; g.fillText(fit(g, tl, 620), 332, 341);
+    // 요약
+    var total = items.reduce(function (s, i) { return s + i.cost; }, 0);
+    var done = items.filter(function (i) { return i.done; }).length;
+    var stats = [['버킷리스트', items.length + '개'], ['모두 이루려면', fmtMan(total)], ['이룬 것', done + ' / ' + items.length]];
+    stats.forEach(function (s, i) {
+      var sx = 110 + i * 290;
+      rr(g, sx, 410, 270, 150, 24); g.strokeStyle = RULE; g.lineWidth = 3; g.setLineDash([10, 8]); g.stroke(); g.setLineDash([]);
+      g.fillStyle = INK2; g.font = '28px ' + B; g.fillText(s[0], sx + 26, 462);
+      g.fillStyle = INK; var vs = 54; g.font = vs + 'px ' + D;
+      while (g.measureText(s[1]).width > 222 && vs > 30) { vs -= 2; g.font = vs + 'px ' + D; }
+      g.fillText(s[1], sx + 26, 530);
+    });
+    // 종류
+    g.fillStyle = INK; g.font = '38px ' + D; g.fillText('가장 많은 종류', 110, 640);
+    var cats = countBy(items, 'cat', CATS).map(function (r, i) { r.idx = i; return r; }).filter(function (r) { return r.n > 0; })
+      .sort(function (a, b) { return b.n - a.n || a.idx - b.idx; }).slice(0, 4);
+    var cmax = cats.length ? cats[0].n : 1;
+    cats.forEach(function (r, i) {
+      var cy = 690 + i * 62;
+      g.fillStyle = INK; g.font = '30px ' + B; g.fillText(r.label, 110, cy + 24);
+      var bw = Math.max(10, (r.n / cmax) * 520);
+      rr(g, 330, cy, bw, 32, 8); g.fillStyle = r.n === cmax ? C.acc : rgba(C.acc, 0.42); g.fill();
+      g.fillStyle = INK; g.font = '30px ' + D; g.fillText(r.n + '개', 330 + bw + 18, cy + 27);
+    });
+    // 꼭 하고 싶은 것
+    var wy = 980;
+    g.fillStyle = INK; g.font = '38px ' + D; g.fillText('꼭 하고 싶은 것', 110, wy);
+    var wants = items.slice().sort(function (a, b) { return b.want - a.want || a.age - b.age; }).slice(0, 3);
+    wants.forEach(function (it, i) {
+      var iy = wy + 62 + i * 60;
+      g.fillStyle = C.acc; g.font = '32px ' + D; g.fillText('♥' + it.want, 110, iy);
+      g.fillStyle = INK; g.font = '32px ' + B; g.fillText(fit(g, it.title + '  (' + it.age + '살)', 740), 200, iy);
+    });
+    g.fillStyle = INK2; g.font = '26px ' + B; g.textAlign = 'right'; g.fillText('버킷리스트 현황판', 970, 1240);
+    return c;
+  }
+
+  /* 툴팁 */
+  var tip = $('tip');
+  function showTip(el, x, y) {
+    tip.textContent = el.getAttribute('data-tip');
+    tip.classList.add('on');
+    var w = tip.offsetWidth, h = tip.offsetHeight;
+    var left = x + 12, top = y + 14;
+    if (left + w > window.innerWidth - 8) left = window.innerWidth - w - 8;
+    if (top + h > window.innerHeight - 8) top = y - h - 10;
+    tip.style.left = Math.max(8, left) + 'px';
+    tip.style.top = Math.max(8, top) + 'px';
+  }
+  function hideTip() { tip.classList.remove('on'); }
+  function onPointer(e) {
+    var t = e.target.closest ? e.target.closest('[data-tip]') : null;
+    if (t) showTip(t, e.clientX, e.clientY); else hideTip();
+  }
+  document.addEventListener('pointermove', onPointer);
+  document.addEventListener('pointerdown', onPointer);
+  document.addEventListener('scroll', hideTip, true);
+
+  /* 보기 전용 링크 */
+  function clearHash() {
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* 그대로 둠 */ }
+  }
+  async function readHash() {
+    var h = (location.hash || '').replace(/^#/, '');
+    if (!/^b2[zj]/.test(h)) return false;
+    var s = await readToken(h);
+    if (s === 'old') { toast('이 브라우저에서는 친구 현황판을 열 수 없어요. 최신 크롬이나 사파리로 열어주세요.'); return false; }
+    if (!s) { toast('링크가 잘렸거나 잘못됐어요. 링크 전체를 다시 복사해 달라고 해주세요.'); return false; }
+    shared = s; mode = 'shared';
+    return true;
+  }
+  $('goMine').addEventListener('click', function () {
+    mode = 'own'; shared = null; clearHash(); render(); window.scrollTo({ top: 0 });
+  });
+  window.addEventListener('hashchange', async function () {
+    if (await readHash()) { render(); window.scrollTo({ top: 0 }); }
+  });
+
+  /* 시작 */
+  buildStatic();
+  load();
+  $('nick').value = state.name;
+  $('note').value = state.note;
+  setAge(20); setHearts(3);
+  render();
+  readHash().then(function (ok) { if (ok) render(); });
+  if (!storageOk) toast('이 창에서는 저장이 안 될 수 있어요. 창을 닫으면 내용이 사라져요.');
+})();
+</script>
+
+</body>
+</html>
